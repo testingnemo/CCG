@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1c3b2a">
+<title>COOL CODING GAME — DLNA City</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ═══════════ THE WORLD (canvas) ═══════════ -->
+  <canvas id="game"></canvas>
+  <div id="weatherfx"></div>
+
+  <!-- ═══════════ HUD — everything here is click-THROUGH ═══════════ -->
+  <div id="hud">
+    <div id="stats"></div>
+    <div id="objective"></div>
+    <div id="banner"></div>
+    <div id="prompt"></div>
+    <div id="toast"></div>
+  </div>
+
+  <!-- game clock + day phase -->
+  <div id="clock"><span>08:00</span><span id="daydial" data-phase="day">☀</span></div>
+
+  <!-- GTA radar -->
+  <div id="radar-wrap">
+    <span id="radar-phase"></span>
+    <canvas id="radar" width="256" height="256"></canvas>
+  </div>
+
+  <!-- radio station badge -->
+  <div id="radiobadge"></div>
+
+  <!-- the ONLY clickable HUD region -->
+  <div id="panel">
+    <button id="btn-map" title="City map (M)">🗺</button>
+    <button id="btn-car" title="Enter/exit car (F)">🚗</button>
+    <button id="btn-radio" title="Radio (R)">📻</button>
+    <button id="btn-horn" title="Horn (H)">📢</button>
+    <button id="btn-lazy" title="LAZY mode: auto-advance dialogues">💤 LAZY</button>
+    <button id="btn-sound" title="Toggle sound">🔊</button>
+    <button id="btn-help" title="How to play">❓</button>
+    <button id="btn-reset" title="Erase save">🗑️</button>
+  </div>
+
+  <!-- ═══════════ DIALOGUE (PY the snake 🐍 + Python panel) ═══════════ -->
+  <div id="dialogue" class="sheet">
+    <div class="d-tap-area"></div>
+    <div class="d-box">
+      <div class="d-head">
+        <span class="d-avatar">🐍</span>
+        <span class="d-name">PY</span>
+        <button class="d-skip">SKIP ▸▸</button>
+      </div>
+      <div class="d-text"></div>
+      <pre class="d-code"></pre>
+      <button class="d-hint"><span class="kchip" data-key="SPACE">[SPACE]</span> next</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ QUIZ ═══════════ -->
+  <div id="quiz" class="modal">
+    <div class="q-card">
+      <div class="q-head">
+        <span class="q-icon">🌱</span>
+        <span class="q-title"></span>
+        <span class="q-prog"></span>
+      </div>
+      <div class="q-text"></div>
+      <div class="q-opts"></div>
+      <div class="q-feed"></div>
+      <button class="q-next">NEXT</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ BOSS BATTLE ═══════════ -->
+  <div id="boss" class="modal">
+    <div class="b-banner"></div>
+    <div class="q-card b-card">
+      <div class="b-row">
+        <span class="b-emoji">🗿</span>
+        <span class="b-hp-boss"></span>
+      </div>
+      <div class="b-name"></div>
+      <div class="b-q"></div>
+      <div class="b-opts"></div>
+      <div class="b-feed"></div>
+      <button class="b-next">NEXT</button>
+    </div>
+    <div class="b-row b-yourow"><span class="b-hp-you"></span></div>
+  </div>
+
+  <!-- ═══════════ MISSION PASSED splash ═══════════ -->
+  <div id="mission">
+    <div class="m-title">MISSION PASSED</div>
+    <div class="m-sub"></div>
+  </div>
+
+  <!-- ═══════════ cinematic letterbox ═══════════ -->
+  <div id="letterbox"></div>
+
+  <!-- ═══════════ BIG PAUSE MAP ═══════════ -->
+  <div id="bigmap">
+    <div class="map-frame">
+      <button class="map-close">✕</button>
+      <canvas width="800" height="550"></canvas>
+    </div>
+    <div class="map-tip">Click anywhere to set a waypoint · M / ESC to close</div>
+  </div>
+
+  <!-- ═══════════ TITLE SCREEN ═══════════ -->
+  <div id="title" class="screen show">
+    <div class="t-logo">COOL CODING<br>GAME</div>
+    <div class="t-sub">an open-world Deep Learning adventure · 26 UBAI 601 · 5 units · 26 sites · 5 bosses<br>drive slow or fast · smash trees &amp; lamps · watch day turn to night</div>
+    <div class="t-btns">
+      <button id="btn-new" class="t-btn">▶ NEW GAME</button>
+      <button id="btn-continue" class="t-btn disabled">↻ CONTINUE</button>
+    </div>
+    <div class="t-hint">WASD / arrows to roam · SHIFT sprint/fast · G/C slow · SPACE brake · E interact · F drive · M map · R radio · H horn<br>📱 touch D-pad appears automatically</div>
+    <div class="t-ver">v8 · DLNA EDITION</div>
+  </div>
+
+  <!-- ═══════════ VICTORY ═══════════ -->
+  <div id="victory" class="screen">
+    <div class="v-cup">🏆</div>
+    <div class="t-logo small">DLNA MASTER!</div>
+    <div id="v-stats"></div>
+    <p class="v-text">From perceptrons to transformers and deployment pipelines — you trained every architecture.<br>PY is proud of you, neural architect. 🐍</p>
+    <button id="btn-roam" class="t-btn">ROAM ON</button>
+  </div>
+
+  <!-- ═══════════ TOUCH CONTROLS ═══════════ -->
+  <div id="dpad">
+    <button id="dpad-up">▲</button>
+    <button id="dpad-left">◀</button>
+    <button id="dpad-right">▶</button>
+    <button id="dpad-down">▼</button>
+  </div>
+  <button id="actionBtn">E</button>
+
+  <!-- ═══════════ LOAD ORDER MATTERS ═══════════
+       1. data/  — the WORLD + the PROGRAMMING CONTENT (edit these!)
+       2. engine/ — the machinery (no content here)
+       Classic scripts (not ES modules) so the game also runs when
+       you double-click index.html from the file explorer. -->
+  <script src="data/world-map.js"></script>
+  <script src="data/unit1.js"></script>
+  <script src="data/unit2.js"></script>
+  <script src="data/unit3.js"></script>
+  <script src="data/unit4.js"></script>
+  <script src="data/unit5.js"></script>
+  <script src="engine/audio.js"></script>
+  <script src="engine/sprites.js"></script>
+  <script src="engine/world.js"></script>
+  <script src="engine/daynight.js"></script>
+  <script src="engine/weather.js"></script>
+  <script src="engine/input.js"></script>
+  <script src="engine/player.js"></script>
+  <script src="engine/vehicles.js"></script>
+  <script src="engine/npc.js"></script>
+  <script src="engine/radio.js"></script>
+  <script src="engine/minimap.js"></script>
+  <script src="engine/dialogue.js"></script>
+  <script src="engine/quiz.js"></script>
+  <script src="engine/boss.js"></script>
+  <script src="engine/hud.js"></script>
+  <script src="engine/save.js"></script>
+  <script src="engine/main.js"></script>
+</body>
+</html>
